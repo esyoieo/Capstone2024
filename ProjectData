@@ -1,0 +1,153 @@
+// 회원 등급
+public enum Grade {
+    Admin,      // 관리자(상품 등록/삭제 가능)
+    Special,    // 특별 회원(할인율 있음 50%)
+    Ordinary    // 일반 회원(할인율 없음)
+}
+
+// 회원
+public class Member {
+    private String id;
+    private String name;
+    private int age;        // 연령(연령별로 구매할 수 있는 상품 추천=기존 기획 방향)
+    private Grade grade;    // 회원 등급
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAge() {
+        return age;
+    }
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public Grade getGrade() {
+        return grade;
+    }
+    public void setGrade(Grade grade) {
+        this.grade = grade;
+    }
+}
+
+// 회원 목록
+public interface MemberList {
+
+    void save(Member member);
+
+    Optional<Member> findById(String id);
+    Optional<Member> findByName(String name);
+    List<Member> findAll(); // 전체 회원 조회
+}
+
+// 상품
+public class Product {
+    private String pName;   // 상품명
+    private int pPrice;     // 상품 가격
+    private int pCount;     // 상품 구매 개수
+
+    public String getPname() {
+        return pName;
+    }
+    public void setPname(String pName) {
+        this.pName = pName;
+    }
+
+    public int getPprice() {
+        return pPrice;
+    }
+    public void setPprice(int pPrice) {
+        this.pPrice = pPrice;
+    }
+
+    public int getPcount() {
+        return pCount;
+    }
+    public void setPcount(int pCount) {
+        this.pCount = pCount;
+    }
+}
+
+// 상품 할인
+public class DiscountRate {
+    private int discountRate = 50; // 50% 할인
+
+    public int discountProduct(Member member, int pPrice) {
+        if(member.getGrade() == Grade.Special) {
+            return (productPrice * discountRate) / 100;
+        }
+        else {
+            return 0;
+        }
+    }
+}
+
+// 상품 주문
+public class ProductOrder {
+    private String memberId;
+    private String productName;
+    private int productPrice;
+    private int discountPrice;
+
+    public ProductOrder(String memberId, String productName, int productPrice, int discountPrice) {
+        this.memberId = memberId;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.discountPrice = discountPrice;
+    }
+
+    public int finalPrice() {
+        return productPrice - discountPrice;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public int getProductPrice() {
+        return pPrice;
+    }
+
+    public int getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public String toString() {
+        return "주문목록{" + "계정: " + memberId + ", 상품명: " + productName + ", 정가: " + productPrice + ", 구입: " + discountPrice;
+    }
+}
+
+// 상품 주문 '서비스'
+public interface ProductOrderService {
+    ProductOrder createProductOrder(String memberId, String productName, int productPrice);
+}
+
+// 상품 주문 상태
+public enum ProductOrderState {
+    ORDER,  // 주문 완료
+    CANCEL  // 주문 취소
+}
+
+// 상품 배송 상태
+public enum ProductDeliveryState {
+    READY,      // 상품 준비 시작
+    PROGRESS,   // 배송중
+    COMPLETE    // 배송 완료
+}
+
+// 
